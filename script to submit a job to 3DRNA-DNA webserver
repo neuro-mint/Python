@@ -1,0 +1,89 @@
+from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
+from webdriver_manager.chrome import ChromeDriverManager
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.common.by import By
+
+import pandas as pd
+import requests
+import html
+import time
+
+#function splits converts the txt file to dataframe
+def vienna_txt_to_df():
+    seqs = open('C:/Users/Pranav/Downloads/seq1.txt')
+    raw_data = seqs.read()
+    data = raw_data.splitlines()   
+    data = {'ID': data[0::3], 'Sequence': data[1::3], 'Dot bracket notation': data[2::3]}
+    df = pd.DataFrame(data)
+    return df
+
+#signs into the serveer
+def sign_in():
+    driver.find_element(By.XPATH, '//*[@id="navContent"]/ul[3]/li[2]/a').click()
+    driver.find_element(By.CSS_SELECTOR, '#email').send_keys("pranavbhedsurkar@gmail.com")
+    driver.find_element(By.CSS_SELECTOR, '#password').send_keys("hnDdw3jpEDLdpJH")
+
+def submit_job(x):
+    if x == 0:
+        seq = df["Sequence"].iloc[0]
+        dtbr = df["Dot bracket notation"].iloc[0]
+        name = df["ID"].iloc[0]
+
+        mol_type_btn = driver.find_element(By.CSS_SELECTOR, '#pane-new_task > div > form > div:nth-child(4) > div > div > div > div.el-badge.item > label > span.el-radio__input > span')
+        mol_type_btn.click()
+
+        task_name = driver.find_element(By.CSS_SELECTOR, '#pane-new_task > div > form > div:nth-child(6) > div > div > div > input')
+        task_name.clear()
+        task_name.send_keys(name)
+
+        seq_input = driver.find_element(By.CSS_SELECTOR, '#pane-new_task > div > form > div:nth-child(9) > div > div > div > textarea')
+        seq_input.send_keys(seq)
+
+        sec_str = driver.find_element(By.CSS_SELECTOR, '#pane-new_task > div > form > div:nth-child(13) > div > div > div > textarea')
+        sec_str.send_keys(dtbr)
+
+        form_submit_btn = driver.find_element(By.CSS_SELECTOR, '#pane-new_task > div > form > div:nth-child(20) > div > button.el-button.el-button--primary > span')
+        form_submit_btn.click()
+
+        time.sleep(1)
+        ok_btn = driver.find_element(By.CSS_SELECTOR, '#pane-new_task > div > form > div:nth-child(1) > div > div.el-dialog__footer > span > button > span')
+        ok_btn.click()
+
+    else:
+        seq = df["Sequence"].iloc[x]
+        dtbr = df["Dot bracket notation"].iloc[x]
+        name = df["ID"].iloc[x]
+
+        task_name = driver.find_element(By.CSS_SELECTOR, '#pane-new_task > div > form > div:nth-child(6) > div > div > div > input')
+        task_name.clear()
+        task_name.send_keys(name)
+
+        seq_input = driver.find_element(By.CSS_SELECTOR, '#pane-new_task > div > form > div:nth-child(9) > div > div > div > textarea')
+        seq_input.send_keys(seq)
+
+        sec_str = driver.find_element(By.CSS_SELECTOR, '#pane-new_task > div > form > div:nth-child(13) > div > div > div > textarea')
+        sec_str.send_keys(dtbr)
+
+        form_submit_btn = driver.find_element(By.CSS_SELECTOR, '#pane-new_task > div > form > div:nth-child(20) > div > button.el-button.el-button--primary > span')
+        form_submit_btn.click()
+
+        time.sleep(1)
+        ok_btn = driver.find_element(By.CSS_SELECTOR, '#pane-new_task > div > form > div:nth-child(1) > div > div.el-dialog__footer > span > button > span')
+        ok_btn.click()
+       
+#initializes chrome driver and opens url in a window
+def open_browser():
+    options = webdriver.ChromeOptions()
+    options.add_experimental_option("detach", True)
+    driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), chrome_options=options)
+    driver.get("http://biophy.hust.edu.cn/new/3dRNA/create")
+
+vienna_txt_to_df()
+open_browser() ; sign_in()
+time.sleep(30)
+
+#submits in batch
+for i in range(5):
+    submit_job(i)
+
