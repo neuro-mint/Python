@@ -1,0 +1,28 @@
+from random import shuffle
+
+num_list = ['', 0, '']
+
+#shuffles the list
+def shufffle_list(num_list):
+	shuffle(num_list)
+	return num_list
+
+result =num_list
+
+#takes user input
+def ply_guess():
+	guess = ''
+	while guess not in [0,1,2]:
+		guess = int(input('Choose a number from - 0, 1, 2\n'))
+	return guess
+
+index = ply_guess(s)
+
+#checks guess
+if num_list[index] == 0 :
+	print('Monty!!')
+else:
+	print('better luck next time')
+
+
+
