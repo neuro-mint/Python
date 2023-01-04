@@ -1,0 +1,25 @@
+def reverse_str():
+	#takes user input
+	string = input('Enter a word..\n')
+	n_list =[]
+	for i in string:
+		n_list.append(i)
+
+	str_list = n_list
+
+	#reverses the list
+	new_list = ['']
+	n = len(str_list)
+
+	for i in range(n):
+		new_list.append(str_list[(n-1)-i])
+
+	# converts list to string.
+	str1 = ''
+	for i in new_list:
+		str1 += i
+	return str1
+
+result = reverse_str()
+
+print(result)
